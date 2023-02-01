@@ -42,6 +42,7 @@ if __name__ == '__main__' :
 
     input_parser.add_argument("--dev-base-dir", metavar="dir", nargs='?', default="/data", type=str, help="[Only DEVs] Data Path")
     input_parser.add_argument("--dev-code-dir", metavar="dir", nargs='?', default='/code', type=str, help="[Only DEVs] Code path")
+    input_parser.add_argument("--dev-run-local", action='store_true', help="[Only DEVs] Run locally for tests")
     
     input_parser.add_argument("--debug", action='store_true', help="Debug only shows the command running")
 
@@ -65,6 +66,7 @@ if __name__ == '__main__' :
 
     elif (mode == "multiple") :
         if (myhelp) : 
+            print("Run conversion code on all 5.1 files found inside folder.")
             cmd = "" 
         else :
             new_cmd = "$HOME/.cargo/bin/rg --files-with-matches 'DataFile Version 5.1' {} > {}files.txt".format(base_dir, base_dir) 
@@ -72,21 +74,21 @@ if __name__ == '__main__' :
             if (cmd_ret == 0) : 
                 with open(base_dir+"files.txt") as f: 
                     lines = [line.rstrip('\n') for line in f] 
-                    cmd = [convert_to_vtk_42(fname, fname, base_dir, codes=codes_d) for fname in lines]
+                    # lines come with base_dir already in it.
+                    cmd = [convert_to_vtk_42(fname, fname, '', codes=codes_d) for fname in lines]
 
             else : 
                 cmd = ""
 
     if (type(cmd) is list or (type(cmd) is str and cmd != "") ) : 
-
         ppth = "" if (local) else "/opt/conda/envs/vtk910/bin/"
-        cmd = ppth + cmd 
-        
-        print("[INFO] Correct input. Command in container: \n {}".format(cmd))
         
         if (not debug) : 
+            print('[INFO] Correct input. Command(s) in container will appear below.')
             print('Running...')
             cmd = [cmd] if type(cmd) is str else cmd 
             for command in cmd : 
-                os.system(command) 
+                os.system(ppth + command) 
+                print("    Command in container: \n {}".format(command))
+        
                 
