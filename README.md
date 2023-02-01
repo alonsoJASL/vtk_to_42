@@ -7,7 +7,7 @@ Simple python script to convert vtk legacy ascii files from
 To use directly on your computer, you can set up a conda environment: 
 ```sh
 conda create -n vtk910 python=3.8 -y
-conda install -c conda-forge vtk==9.1.0 -n vtk910 && \
+conda install -c conda-forge vtk==9.1.0 -n vtk910 -y 
 conda clean -afy
 ```
 
